@@ -4,6 +4,8 @@ set -e
 export CI_USER=gitlab-runner
 export WORKING_DIR=/home/${CI_USER}/${HOSTNAME}
 
+mkdir $WORKING_DIR
+
 # Verify existing configuration
 if [[ -f ${WORKING_DIR}/config.toml ]]
 then

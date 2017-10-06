@@ -30,7 +30,10 @@ then
   export RUNNER_NAME="${RUNNER_NAME:-Running on ${HOSTNAME}}"
   # gitlab-runner register --config ${WORKING_DIR}/config.toml
   gitlab-runner register -n
+  echo "end";
 fi
+
+echo "if end";
 
 if [[ $CONCURRENCY ]]
 then

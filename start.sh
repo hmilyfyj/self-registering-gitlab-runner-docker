@@ -28,7 +28,8 @@ then
   : "${DOCKER_IMAGE:?DOCKER_IMAGE has to be set and non-empty}"
   # Setting $RUNNER_NAME if none defined
   export RUNNER_NAME="${RUNNER_NAME:-Running on ${HOSTNAME}}"
-  gitlab-runner register --config ${WORKING_DIR}/config.toml
+  # gitlab-runner register --config ${WORKING_DIR}/config.toml
+  gitlab-runner register -n
 fi
 
 if [[ $CONCURRENCY ]]

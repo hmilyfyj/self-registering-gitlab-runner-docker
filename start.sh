@@ -3,6 +3,7 @@ set -e
 
 export CI_USER=gitlab-runner
 export WORKING_DIR=/home/${CI_USER}/${HOSTNAME}
+export WORKING_DIR=/etc/gitlab-runner
 
 #mkdir $WORKING_DIR
 

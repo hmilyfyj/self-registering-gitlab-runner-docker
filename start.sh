@@ -1,23 +1,38 @@
 #!/bin/bash
-set -e
+
+# gitlab-ci-multi-runner data directory
+DATA_DIR="/etc/gitlab-runner"
+CONFIG_FILE=${CONFIG_FILE:-$DATA_DIR/config.toml}
+# custom certificate authority path
+CA_CERTIFICATES_PATH=${CA_CERTIFICATES_PATH:-$DATA_DIR/certs/ca.crt}
+LOCAL_CA_PATH="/usr/local/share/ca-certificates/ca.crt"
+
+update_ca() {
+  echo "Updating CA certificates..."
+  cp "${CA_CERTIFICATES_PATH}" "${LOCAL_CA_PATH}"
+  update-ca-certificates --fresh >/dev/null
+}
+
+if [ -f "${CA_CERTIFICATES_PATH}" ]; then
+  # update the ca if the custom ca is different than the current
+  cmp --silent "${CA_CERTIFICATES_PATH}" "${LOCAL_CA_PATH}" || update_ca
+fi
 
 export CI_USER=gitlab-runner
 export WORKING_DIR=/home/${CI_USER}/${HOSTNAME}
 
-export WORKING_DIR=/etc/gitlab-runner
-
 # Verify existing configuration
-if [[ -f ${WORKING_DIR}/config.toml ]]
+if [[ -f $DATA_DIR/config.toml ]]
 then
-  gitlab-runner verify --delete --config ${WORKING_DIR}/config.toml
-  runner_count=$(($(gitlab-runner list --config ${WORKING_DIR}/config.toml &> .gitlab-runner-list && cat .gitlab-runner-list | wc -l && rm .gitlab-runner-list)-1))
+  gitlab-runner verify --delete --config $DATA_DIR/config.toml
+  runner_count=$(($(gitlab-runner list --config $DATA_DIR/config.toml &> .gitlab-runner-list && cat .gitlab-runner-list | wc -l && rm .gitlab-runner-list)-1))
   if [[ $DEBUG ]]
   then
     echo "There is ${runner_count} runner in the config.toml"
   fi
 fi
 
-if [[ ! -f ${WORKING_DIR}/config.toml || ${runner_count} -lt 1 ]]
+if [[ ! -f $DATA_DIR/config.toml || ${runner_count} -lt 1 ]]
 then
   # Register a new register if there is none yet
   export REGISTER_NON_INTERACTIVE=true
@@ -30,31 +45,8 @@ then
   : "${DOCKER_IMAGE:?DOCKER_IMAGE has to be set and non-empty}"
   # Setting $RUNNER_NAME if none defined
   export RUNNER_NAME="${RUNNER_NAME:-Running on ${HOSTNAME}}"
-  # gitlab-runner register --config ${WORKING_DIR}/config.toml
   gitlab-runner register -n
   echo "end";
-fi
-
-echo "if end";
-
-if [[ $CONCURRENCY ]]
-then
-
-  if [[ $DEBUG ]]
-  then
-    echo "Updating the gitlab-runner service concurrency to $CONCURRENCY..."
-  fi
-
-  cat ${WORKING_DIR}/config.toml | sed "s/concurrent =.*/concurrent = $CONCURRENCY/" > ${WORKING_DIR}/config.toml.updated
-  mv ${WORKING_DIR}/config.toml.updated ${WORKING_DIR}/config.toml
-  echo "Updated"
-fi
-
-if [[ $DEBUG ]]
-then
-  echo "Printing the config.toml file..."
-  cat ${WORKING_DIR}/config.toml
-  echo "Printed"
 fi
 
 if [ -d "/usr/local/docker_share/config"]
@@ -69,9 +61,12 @@ then
   git clone $REPO_URL
 fi
 
-export RUNNER_TOKEN=$(grep token /etc/gitlab-runner/config.toml | awk '{print $3}' | tr -d '"')
+# launch gitlab-ci-multi-runner passing all arguments
+exec gitlab-ci-multi-runner "$@"
 
-# Start the Gitlab Runner
-gitlab-runner run \
-  --user=${CI_USER} \
-  --working-directory=${WORKING_DIR}
+if [[ $DEBUG ]]
+then
+  echo "Printing the config.toml file..."
+  cat $DATA_DIR/config.toml
+  echo "Printed"
+fi

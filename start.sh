@@ -57,12 +57,14 @@ then
   echo "Printed"
 fi
 
-if [ -d "/usr/local/docker_share/config"]; then
+if [ -d "/usr/local/docker_share/config"]
+then
   cd /usr/local/docker_share/config
-  git pull
+  git pull $REPO_URL
 fi
 
-if [ ! -d "/usr/local/docker_share/config"]; then
+if [ ! -d "/usr/local/docker_share/config"]
+then
   cd /usr/local/docker_share/
   git clone $REPO_URL
 fi

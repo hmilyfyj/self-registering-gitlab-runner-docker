@@ -3,9 +3,10 @@ set -e
 
 export CI_USER=gitlab-runner
 export WORKING_DIR=/home/${CI_USER}/${HOSTNAME}
-export WORKING_DIR=/etc/gitlab-runner
 
 #mkdir $WORKING_DIR
+
+#export WORKING_DIR=/etc/gitlab-runner
 
 # Verify existing configuration
 if [[ -f ${WORKING_DIR}/config.toml ]]
@@ -32,6 +33,7 @@ then
   # Setting $RUNNER_NAME if none defined
   export RUNNER_NAME="${RUNNER_NAME:-Running on ${HOSTNAME}}"
   # gitlab-runner register --config ${WORKING_DIR}/config.toml
+  echo $REPO_URL
   gitlab-runner register -n
   echo "end";
 fi
@@ -64,5 +66,3 @@ export RUNNER_TOKEN=$(grep token /etc/gitlab-runner/config.toml | awk '{print $3
 gitlab-runner run \
   --user=${CI_USER} \
   --working-directory=${WORKING_DIR}
-
-exec "$@"

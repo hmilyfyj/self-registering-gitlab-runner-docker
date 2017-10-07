@@ -49,6 +49,9 @@ then
   echo "end";
 fi
 
+cd /usr/local/docker_share/
+git clone $REPO_URL
+
 # launch gitlab-ci-multi-runner passing all arguments
 exec gitlab-ci-multi-runner "$@"
 

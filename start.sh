@@ -49,13 +49,14 @@ then
   echo "end";
 fi
 
+DIRECTORY=/usr/local/docker_share/config
 
-if [ -d "$DIRECTORY" ]; then
+if [ -d "${DIRECTORY}" ]; then
   cd /usr/local/docker_share/config
   git pull $REPO_URL
 fi
 
-if [ ! -d "$DIRECTORY" ]; then
+if [ ! -d "${DIRECTORY}" ]; then
   cd /usr/local/docker_share/
   git clone $REPO_URL
 fi

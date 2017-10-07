@@ -33,8 +33,7 @@ then
   # Setting $RUNNER_NAME if none defined
   export RUNNER_NAME="${RUNNER_NAME:-Running on ${HOSTNAME}}"
   # gitlab-runner register --config ${WORKING_DIR}/config.toml
-  echo $REPO_URL
-  gitlab-runner register -n
+  gitlab-runner register -n --config ${WORKING_DIR}/config.toml
   echo "end";
 fi
 
@@ -56,7 +55,7 @@ fi
 if [[ $DEBUG ]]
 then
   echo "Printing the config.toml file..."
-  cat ${WORKING_DIR}/config.toml
+  cat /etc/gitlab-runner/config.toml
   echo "Printed"
 fi
 

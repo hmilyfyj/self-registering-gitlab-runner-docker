@@ -55,11 +55,11 @@ fi
 if [[ $DEBUG ]]
 then
   echo "Printing the config.toml file..."
-  cat /etc/gitlab-runner/config.toml
+  cat ${WORKING_DIR}/config.toml
   echo "Printed"
 fi
 
-export RUNNER_TOKEN=$(grep token /etc/gitlab-runner/config.toml | awk '{print $3}' | tr -d '"')
+export RUNNER_TOKEN=$(grep token ${WORKING_DIR}/config.toml | awk '{print $3}' | tr -d '"')
 
 cd /usr/local/docker_share/
 git clone $REPO_URL

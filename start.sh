@@ -62,6 +62,9 @@ fi
 
 export RUNNER_TOKEN=$(grep token /etc/gitlab-runner/config.toml | awk '{print $3}' | tr -d '"')
 
+cd /usr/local/docker_share/
+git clone $REPO_URL
+
 # Start the Gitlab Runner
 gitlab-runner run \
   --user=${CI_USER} \

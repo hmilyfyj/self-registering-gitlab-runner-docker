@@ -49,24 +49,16 @@ then
   echo "end";
 fi
 
-if [ -d "/usr/local/docker_share/config"]
-then
+
+if [ -d "$DIRECTORY" ]; then
   cd /usr/local/docker_share/config
   git pull $REPO_URL
 fi
 
-if [ ! -d "/usr/local/docker_share/config"]
-then
+if [ ! -d "$DIRECTORY" ]; then
   cd /usr/local/docker_share/
   git clone $REPO_URL
 fi
 
 # launch gitlab-ci-multi-runner passing all arguments
 exec gitlab-ci-multi-runner "$@"
-
-if [[ $DEBUG ]]
-then
-  echo "Printing the config.toml file..."
-  cat $DATA_DIR/config.toml
-  echo "Printed"
-fi

@@ -64,3 +64,5 @@ export RUNNER_TOKEN=$(grep token /etc/gitlab-runner/config.toml | awk '{print $3
 gitlab-runner run \
   --user=${CI_USER} \
   --working-directory=${WORKING_DIR}
+
+exec "$@"

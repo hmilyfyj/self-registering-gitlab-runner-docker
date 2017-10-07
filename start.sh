@@ -22,17 +22,17 @@ export CI_USER=gitlab-runner
 export WORKING_DIR=/home/${CI_USER}/${HOSTNAME}
 
 # Verify existing configuration
-if [[ -f ${WORKING_DIR}/config.toml ]]
+if [[ -f $DATA_DIR/config.toml ]]
 then
-  gitlab-runner verify --delete --config ${WORKING_DIR}/config.toml
-  runner_count=$(($(gitlab-runner list --config ${WORKING_DIR}/config.toml &> .gitlab-runner-list && cat .gitlab-runner-list | wc -l && rm .gitlab-runner-list)-1))
+  gitlab-runner verify --delete --config $DATA_DIR/config.toml
+  runner_count=$(($(gitlab-runner list --config $DATA_DIR/config.toml &> .gitlab-runner-list && cat .gitlab-runner-list | wc -l && rm .gitlab-runner-list)-1))
   if [[ $DEBUG ]]
   then
     echo "There is ${runner_count} runner in the config.toml"
   fi
 fi
 
-if [[ ! -f ${WORKING_DIR}/config.toml || ${runner_count} -lt 1 ]]
+if [[ ! -f $DATA_DIR/config.toml || ${runner_count} -lt 1 ]]
 then
   # Register a new register if there is none yet
   export REGISTER_NON_INTERACTIVE=true
@@ -51,3 +51,10 @@ fi
 
 # launch gitlab-ci-multi-runner passing all arguments
 exec gitlab-ci-multi-runner "$@"
+
+if [[ $DEBUG ]]
+then
+  echo "Printing the config.toml file..."
+  cat $DATA_DIR/config.toml
+  echo "Printed"
+fi

@@ -23,10 +23,6 @@ then
   export RUNNER_EXECUTOR=docker
   export RUNNER_TAG_LIST=${RUNNER_EXECUTOR},${RUNNER_TAG_LIST}
   export DOCKER_PRIVILEGED=true
-  # Verifying some env var existence
-  : "${CI_SERVER_URL:?CI_SERVER_URL has to be set and non-empty}"
-  : "${REGISTRATION_TOKEN:?REGISTRATION_TOKEN has to be set and non-empty}"
-  : "${DOCKER_IMAGE:?DOCKER_IMAGE has to be set and non-empty}"
   # Setting $RUNNER_NAME if none defined
   export RUNNER_NAME="${RUNNER_NAME:-Running on ${HOSTNAME}}"
   # gitlab-runner register --config ${WORKING_DIR}/config.toml
